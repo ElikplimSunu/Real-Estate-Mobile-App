@@ -34,9 +34,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sunuerico.realestatemobileapp.ui.theme.RealEstateMobileAppTheme
 
+@Preview(showBackground = true)
+@Composable
+fun SignInComposablePreview() {
+    RealEstateMobileAppTheme {
+        SignIn()
+    }
+}
 @Composable
 fun SignIn(modifier: Modifier = Modifier){
     val gillSans = FontFamily(
@@ -69,8 +78,8 @@ Box(modifier = modifier.fillMaxSize()) {
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.Transparent, Color(0xFFA873EB)),
-                        startY = 400.0f,
-                        endY = 670f
+                        startY = 350.0f,
+                        endY = 650f
                     )
                 ),
             contentAlignment = Alignment.Center
@@ -96,7 +105,7 @@ Box(modifier = modifier.fillMaxSize()) {
                         append("\nfor your future")
                     })
 
-                Spacer(modifier = Modifier.height(7.09.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 Text(
                     style = TextStyle(fontSize = 20.sp, fontFamily = gillSans, color = Color.White)
