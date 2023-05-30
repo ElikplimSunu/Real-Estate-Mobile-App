@@ -19,12 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -46,16 +43,17 @@ fun SignInComposablePreview() {
         SignIn()
     }
 }
+
+val gillSans = FontFamily(
+    Font(R.font.gill_sans, FontWeight.Normal),
+    Font(R.font.gill_sans_bold, FontWeight.Bold),
+    Font(R.font.gill_sans_light, FontWeight.Light),
+    Font(R.font.gill_sans_medium, FontWeight.Medium),
+    Font(R.font.gill_sans_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.gill_sans_heavy_italic, FontWeight.Bold, FontStyle.Italic)
+)
 @Composable
 fun SignIn(modifier: Modifier = Modifier){
-    val gillSans = FontFamily(
-        Font(R.font.gill_sans, FontWeight.Normal),
-        Font(R.font.gill_sans_bold, FontWeight.Bold),
-        Font(R.font.gill_sans_light, FontWeight.Light),
-        Font(R.font.gill_sans_medium, FontWeight.Medium),
-        Font(R.font.gill_sans_italic, FontWeight.Normal, FontStyle.Italic),
-        Font(R.font.gill_sans_heavy_italic, FontWeight.Bold, FontStyle.Italic)
-    )
 
 Box(modifier = modifier.fillMaxSize()) {
     Image(
@@ -115,7 +113,7 @@ Box(modifier = modifier.fillMaxSize()) {
 
                 Spacer(modifier = Modifier.height(43.01.dp))
 
-                Box() {
+                Box{
                     Row(
                         modifier = Modifier.fillMaxWidth()
                             .padding(bottom = 18.9.dp),
