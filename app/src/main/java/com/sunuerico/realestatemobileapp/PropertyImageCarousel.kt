@@ -1,7 +1,9 @@
 package com.sunuerico.realestatemobileapp
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,10 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -33,37 +39,65 @@ import com.sunuerico.realestatemobileapp.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageCarousel(images: List<ImageItem>, autoScrollInterval: Long = 2000) {
+fun ImageCarousel(images: List<ImageItem>, autoScrollInterval: Long = 1500) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
-    var currentItemIndex by remember { mutableIntStateOf(0) }
+    val totalItem: Int = 4
+    val pagerState: PagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        images.size.coerceAtMost(totalItem)
+    }
+    var nextPage by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(autoScrollInterval)
-            coroutineScope.launch {
-                scrollState.animateScrollToItem(currentItemIndex + 1)
-                currentItemIndex = (currentItemIndex + 1) % images.size
+
+    val pageCount = images.size.coerceAtMost(totalItem)
+    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+    if (isDragged.not()) {
+        with(pagerState) {
+            if (pageCount > 0) {
+                var currentPageKey by remember { mutableIntStateOf(0) }
+                LaunchedEffect(key1 = currentPageKey) {
+                    coroutineScope.launch {
+                        delay(timeMillis = autoScrollInterval)
+                        nextPage = (currentPage + 1).mod(pageCount)
+                        animateScrollToPage(page = nextPage)
+                        currentPageKey = nextPage
+                    }
+                }
             }
         }
     }
 
-    LazyRow(
-        state = scrollState,
+//    LaunchedEffect(Unit) {
+//        while (true) {
+//            delay(autoScrollInterval)
+//            coroutineScope.launch {
+//                scrollState.animateScrollToItem(currentItemIndex + 1)
+//                currentItemIndex = (currentItemIndex + 1) % images.size
+//            }
+//        }
+//    }
+
+    HorizontalPager(
+        state = pagerState,
         modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.Center
+//        horizontalArrangement = Arrangement.Center
     ) {
-        items(images) { item ->
+//        items(images) {
+            item ->
             Image(
-                painter = painterResource(id = item.id),
+                painter = painterResource(id = images[item].id),
                 contentDescription = null,
                 modifier = Modifier
 //                    .aspectRatio(1f)
                     .fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-        }
+//        }
     }
 
     // Indicator colors
@@ -82,8 +116,9 @@ fun ImageCarousel(images: List<ImageItem>, autoScrollInterval: Long = 2000) {
                 .padding(bottom = 125.dp)
         ) {
             images.forEachIndexed { index, _ ->
-                if (index == currentItemIndex) {
-                    Box(modifier = Modifier.padding(15.dp)
+                if (index == nextPage) {
+                    Box(modifier = Modifier
+                        .padding(15.dp)
                         .size(6.dp)) {
                         Canvas(
                             modifier = Modifier
@@ -101,7 +136,8 @@ fun ImageCarousel(images: List<ImageItem>, autoScrollInterval: Long = 2000) {
                         }
                     }
                 }else {
-                    Box(modifier = Modifier.padding(15.dp)
+                    Box(modifier = Modifier
+                        .padding(15.dp)
                         .size(7.dp)) {
                         Canvas(
                             modifier = Modifier
